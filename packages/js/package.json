@@ -1,0 +1,31 @@
+{
+  "name": "@videncrypt/js",
+  "version": "0.1.0",
+  "description": "JavaScript SDK for VidEncrypt secure video player",
+  "license": "MIT",
+  "author": "VidEncrypt",
+  "type": "module",
+  "main":    "./dist/ve.cjs",
+  "module":  "./dist/ve.mjs",
+  "types":   "./dist/ve.d.ts",
+  "browser": "./dist/ve.js",
+  "exports": {
+    ".": {
+      "types":   "./dist/ve.d.ts",
+      "import":  "./dist/ve.mjs",
+      "require": "./dist/ve.cjs"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build":       "tsup",
+    "build:watch": "tsup --watch",
+    "typecheck":   "tsc --noEmit",
+    "clean":       "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript":         "^5.0.0",
+    "tsup":               "^8.0.0",
+    "@aws-sdk/client-s3": "^3.0.0"
+  }
+}

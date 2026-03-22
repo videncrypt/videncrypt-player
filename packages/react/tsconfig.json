@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx":     "react-jsx",
+    "outDir":  "dist",
+    "rootDir": "src",
+    "paths": {
+      "@videncrypt/js": ["../js/dist/ve.d.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

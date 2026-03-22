@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VidEncrypt SDK — Basic Example</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #0f0f0f;
+      color: #fff;
+    }
+    h1 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    p  { font-size: 13px; color: #888; margin-bottom: 24px; }
+    #status {
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: #1a1a1a;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>VidEncrypt Player</h1>
+  <p>Basic embed example using the CDN script tag.</p>
+
+  <div id="player"></div>
+
+  <div id="status">Loading player...</div>
+
+  <!-- Load SDK from local dist for testing.
+       In production: https://cdn.videncrypt.com/sdk/ve.js -->
+  <script src="../dist/ve.js"></script>
+  <script>
+    var status = document.getElementById('status');
+
+    var player = new VidEncrypt.Player({
+      videoId:   '69bf1810a58b82ba7d2feee7',
+      container: '#player',
+
+      onReady: function() {
+        status.textContent = 'Player ready';
+      },
+      onPlay: function() {
+        status.textContent = 'Playing...';
+      },
+      onPause: function() {
+        status.textContent = 'Paused';
+      },
+      onEnded: function() {
+        status.textContent = 'Video ended';
+      },
+      onError: function(e) {
+        status.textContent = 'Error: ' + e.code + ' — ' + e.message;
+        status.style.color = '#f87171';
+      },
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VidEncrypt SDK — Events</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #0f0f0f;
+      color: #fff;
+    }
+    h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    p  { font-size: 13px; color: #888; margin-bottom: 20px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    h2 { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;
+         letter-spacing: 0.08em; margin: 0 0 10px; }
+
+    #log {
+      background: #0a0a0a;
+      border: 1px solid #1f1f1f;
+      border-radius: 8px;
+      padding: 12px;
+      height: 320px;
+      overflow-y: auto;
+      font-size: 12px;
+      font-family: monospace;
+      line-height: 1.7;
+    }
+
+    .log-entry { display: flex; gap: 10px; }
+    .log-time  { color: #555; flex-shrink: 0; }
+    .log-event { color: #60a5fa; }
+    .log-data  { color: #a3e635; }
+
+    .log-event.play             { color: #4ade80; }
+    .log-event.pause            { color: #facc15; }
+    .log-event.ended            { color: #f87171; }
+    .log-event.ready            { color: #818cf8; }
+    .log-event.error            { color: #f87171; }
+    .log-event.progress         { color: #94a3b8; }
+    .log-event.fullscreenchange { color: #fb923c; }
+
+    button {
+      padding: 6px 12px;
+      border-radius: 5px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      margin-right: 6px;
+      margin-bottom: 10px;
+    }
+    button:hover { background: #252525; }
+    #btn-clear   { color: #f87171; border-color: #7f1d1d; }
+  </style>
+</head>
+<body>
+
+  <h1>Event Log</h1>
+  <p>All player events logged in real time.</p>
+
+  <div class="layout">
+    <div>
+      <h2>Player</h2>
+      <div id="player"></div>
+    </div>
+    <div>
+      <h2>Event Log</h2>
+      <div id="log"></div>
+      <button id="btn-clear">Clear log</button>
+    </div>
+  </div>
+
+  <script src="../dist/ve.js"></script>
+  <script>
+    var log = document.getElementById('log');
+
+    function addLog(event, data) {
+      var time = new Date().toTimeString().slice(0, 8);
+      var entry = document.createElement('div');
+      entry.className = 'log-entry';
+
+      var dataStr = '';
+      if (data !== undefined && data !== null && typeof data === 'object') {
+        dataStr = ' ' + JSON.stringify(data);
+      } else if (data !== undefined && data !== null) {
+        dataStr = ' ' + String(data);
+      }
+
+      entry.innerHTML =
+        '<span class="log-time">' + time + '</span>' +
+        '<span class="log-event ' + event + '">' + event + '</span>' +
+        (dataStr ? '<span class="log-data">' + dataStr + '</span>' : '');
+
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    var player = new VidEncrypt.Player({
+      videoId:   '69bf1810a58b82ba7d2feee7',
+      container: '#player',
+    });
+
+    player
+      .on('ready',            function()  { addLog('ready'); })
+      .on('play',             function()  { addLog('play'); })
+      .on('pause',            function()  { addLog('pause'); })
+      .on('ended',            function()  { addLog('ended'); })
+      .on('progress',         function(d) {
+        addLog('progress', {
+          current: d.currentTime.toFixed(1) + 's',
+          total:   d.duration.toFixed(1) + 's',
+        });
+      })
+      .on('error',            function(e) { addLog('error', e); })
+      .on('fullscreenchange', function(f) { addLog('fullscreenchange', { fullscreen: f }); });
+
+    document.getElementById('btn-clear').onclick = function() {
+      log.innerHTML = '';
+    };
+  </script>
+
+</body>
+</html>

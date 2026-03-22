@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VidEncrypt SDK — Controls</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #0f0f0f;
+      color: #fff;
+    }
+    h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    h2 { font-size: 13px; font-weight: 500; color: #888; margin: 20px 0 10px; }
+    #player { margin-bottom: 24px; }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    button {
+      padding: 7px 14px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 120ms;
+    }
+    button:hover   { background: #252525; }
+    button.danger  { border-color: #7f1d1d; color: #fca5a5; }
+    button.success { border-color: #14532d; color: #86efac; }
+
+    #state-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #a3e635;
+      white-space: pre;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Player Controls</h1>
+
+  <div id="player"></div>
+
+  <h2>Playback</h2>
+  <div class="btn-row">
+    <button id="btn-play">▶ Play</button>
+    <button id="btn-pause">⏸ Pause</button>
+    <button id="btn-seek">⏩ Seek to 30s</button>
+  </div>
+
+  <h2>Volume</h2>
+  <div class="btn-row">
+    <button id="btn-vol-50">Volume 50%</button>
+    <button id="btn-vol-100">Volume 100%</button>
+    <button id="btn-mute">🔇 Mute</button>
+    <button id="btn-unmute">🔊 Unmute</button>
+  </div>
+
+  <h2>Fullscreen</h2>
+  <div class="btn-row">
+    <button id="btn-fs">⛶ Enter Fullscreen</button>
+    <button id="btn-exit-fs">✕ Exit Fullscreen</button>
+  </div>
+
+  <h2>Lifecycle</h2>
+  <div class="btn-row">
+    <button id="btn-destroy" class="danger">🗑 Destroy Player</button>
+    <button id="btn-recreate" class="success">↺ Recreate Player</button>
+  </div>
+
+  <h2>Player State</h2>
+  <div id="state-box">Waiting for player...</div>
+
+  <script src="../dist/ve.js"></script>
+  <script>
+    var stateBox = document.getElementById('state-box');
+    var player   = null;
+
+    function updateState() {
+      if (!player) {
+        stateBox.textContent = '(player destroyed)';
+        return;
+      }
+      stateBox.textContent = JSON.stringify(player.getState(), null, 2);
+    }
+
+    function createPlayer() {
+      player = new VidEncrypt.Player({
+        videoId:   '69bf1810a58b82ba7d2feee7',
+        container: '#player',
+        onReady:   updateState,
+      });
+
+      player
+        .on('play',             updateState)
+        .on('pause',            updateState)
+        .on('ended',            updateState)
+        .on('statechange',      updateState)
+        .on('fullscreenchange', updateState);
+    }
+
+    createPlayer();
+
+    document.getElementById('btn-play').onclick     = function() { player && player.play(); };
+    document.getElementById('btn-pause').onclick    = function() { player && player.pause(); };
+    document.getElementById('btn-seek').onclick     = function() { player && player.seek(30); };
+    document.getElementById('btn-vol-50').onclick   = function() { player && player.setVolume(0.5); };
+    document.getElementById('btn-vol-100').onclick  = function() { player && player.setVolume(1); };
+    document.getElementById('btn-mute').onclick     = function() { player && player.mute(); };
+    document.getElementById('btn-unmute').onclick   = function() { player && player.unmute(); };
+    document.getElementById('btn-fs').onclick       = function() { player && player.enterFullscreen(); };
+    document.getElementById('btn-exit-fs').onclick  = function() { player && player.exitFullscreen(); };
+
+    document.getElementById('btn-destroy').onclick = function() {
+      if (player) {
+        player.destroy();
+        player = null;
+        updateState();
+      }
+    };
+
+    document.getElementById('btn-recreate').onclick = function() {
+      if (!player) createPlayer();
+    };
+  </script>
+
+</body>
+</html>

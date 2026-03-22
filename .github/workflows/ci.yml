@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Type check & build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check all packages
+        run: pnpm typecheck
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Verify @videncrypt/js dist
+        run: |
+          test -f packages/js/dist/ve.js   || (echo "❌ ve.js missing"   && exit 1)
+          test -f packages/js/dist/ve.mjs  || (echo "❌ ve.mjs missing"  && exit 1)
+          test -f packages/js/dist/ve.cjs  || (echo "❌ ve.cjs missing"  && exit 1)
+          test -f packages/js/dist/ve.d.ts || (echo "❌ ve.d.ts missing" && exit 1)
+          echo "✅ @videncrypt/js dist OK"
+
+      - name: Verify @videncrypt/react dist
+        run: |
+          test -f packages/react/dist/index.mjs  || (echo "❌ index.mjs missing"  && exit 1)
+          test -f packages/react/dist/index.cjs  || (echo "❌ index.cjs missing"  && exit 1)
+          test -f packages/react/dist/index.d.ts || (echo "❌ index.d.ts missing" && exit 1)
+          echo "✅ @videncrypt/react dist OK"

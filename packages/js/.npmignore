@@ -1,0 +1,17 @@
+# Source
+src/
+
+# Config files
+tsup.config.ts
+tsconfig.json
+
+# Examples and scripts
+examples/
+scripts/
+
+# Maps (optional — remove these two lines if you want sourcemaps on npm)
+dist/*.map
+
+# Misc
+.DS_Store
+*.log

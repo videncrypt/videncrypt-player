@@ -1,0 +1,10 @@
+# Source
+src/
+
+# Config files
+tsup.config.ts
+tsconfig.json
+
+# Misc
+.DS_Store
+*.log
