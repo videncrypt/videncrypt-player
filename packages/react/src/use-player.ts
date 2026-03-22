@@ -14,7 +14,7 @@ export interface UsePlayerOptions
 
 export interface UsePlayerReturn {
   // Attach this ref to the container div
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 
   // Current player state
   state:   PlayerState;
