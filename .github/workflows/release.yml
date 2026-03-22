@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Build, upload CDN, publish npm
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.32.1  # matches whatever version generated the lockfile
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Upload @videncrypt/js to CDN
+        env:
+          R2_ACCOUNT_ID:        ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID:     ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET:            ${{ secrets.R2_BUCKET }}
+        run: node packages/js/scripts/upload-cdn.js
+
+      - name: Publish @videncrypt/js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --filter @videncrypt/js --access public --no-git-checks
+
+      - name: Publish @videncrypt/react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --filter @videncrypt/react --access public --no-git-checks
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            packages/js/dist/ve.js
+            packages/js/dist/ve.mjs
+            packages/js/dist/ve.cjs
+            packages/js/dist/ve.d.ts
+            packages/react/dist/index.mjs
+            packages/react/dist/index.cjs
+            packages/react/dist/index.d.ts
+          generate_release_notes: true
+          body: |
+            ## Packages
+
+            **@videncrypt/js** — vanilla JS SDK
+            **@videncrypt/react** — React component
+
+            ## Install
+
+            ```bash
+            npm install @videncrypt/js@${{ steps.version.outputs.VERSION }}
+            npm install @videncrypt/react@${{ steps.version.outputs.VERSION }}
+            ```
+
+            ## CDN
+
+            ```html
+            <!-- Latest -->
+            <script src="https://sdk.videncrypt.com/ve.js"></script>
+
+            <!-- Pinned v${{ steps.version.outputs.VERSION }} -->
+            <script src="https://sdk.videncrypt.com/v${{ steps.version.outputs.VERSION }}/ve.js"></script>
+            ```
