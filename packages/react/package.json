@@ -5,36 +5,39 @@
   "license": "MIT",
   "author": "VidEncrypt",
   "type": "module",
-  "main":    "./dist/index.cjs",
-  "module":  "./dist/index.mjs",
-  "types":   "./dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types":   "./dist/index.d.ts",
-      "import":  "./dist/index.mjs",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "build":       "tsup",
+    "build": "tsup",
     "build:watch": "tsup --watch",
-    "typecheck":   "tsc --noEmit",
-    "clean":       "rm -rf dist"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "peerDependencies": {
-    "react":     ">=18.0.0",
+    "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
     "@videncrypt/js": "workspace:*"
   },
   "devDependencies": {
-    "typescript":        "^5.0.0",
-    "tsup":              "^8.0.0",
-    "@types/react":      "^18.0.0",
-    "@types/react-dom":  "^18.0.0",
-    "react":             "^18.0.0",
-    "react-dom":         "^18.0.0"
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }
