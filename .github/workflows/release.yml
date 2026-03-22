@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write   # required to create GitHub releases
+
 jobs:
   release:
     name: Build, upload CDN, publish npm
